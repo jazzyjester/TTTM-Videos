@@ -109,6 +109,21 @@
       border-bottom: 2px solid #0066cc;
     }
 
+    .search-input {
+      width: 100%;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      font-size: 14px;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #0066cc;
+    }
+
     .list-container {
       max-height: 600px;
       overflow-y: auto;
@@ -390,6 +405,32 @@
 
     .video-thumbnail:hover {
       opacity: 0.8;
+    }
+
+    .video-thumbnail-container {
+      position: relative;
+      display: inline-block;
+    }
+
+    .video-watched-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(245, 245, 245, 0.6);
+      border-radius: 4px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: flex-end;
+      padding: 4px;
+      pointer-events: none;
+    }
+
+    .video-watched-icon {
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 14px;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
     }
 
     .video-card a {
@@ -714,6 +755,7 @@
     <!-- Right Sidebar with player list and date filter -->
     <div class="sidebar">
       <div class="sidebar-title">שחקנים</div>
+      <input type="text" id="playerSearchInput" class="search-input" placeholder="חפש שחקן...">
       <div id="playerList" class="list-container"></div>
 
       <div class="sidebar-title" style="margin-top: 24px;">סינון לפי תאריך</div>
@@ -749,6 +791,8 @@
       events: new Set(),
       dateRange: null // Can be: 'today', 'yesterday', 'week', 'month', or null
     };
+    let playerSearchQuery = '';
+    let watchedVideos = new Set(JSON.parse(localStorage.getItem('watchedVideos') || '[]'));
 
     // Function to escape HTML to prevent XSS attacks
     function escapeHtml(text) {
@@ -1238,13 +1282,22 @@
       const players = extractPlayers(videos);
       const container = document.getElementById('playerList');
 
-      if (players.length === 0) {
+      // Filter players based on search query
+      const filteredPlayers = players.filter(player => {
+        if (!playerSearchQuery) return true;
+        const searchLower = playerSearchQuery.toLowerCase();
+        const playerName = (player.name || '').toLowerCase();
+        const playerClub = (player.club || '').toLowerCase();
+        return playerName.includes(searchLower) || playerClub.includes(searchLower);
+      });
+
+      if (filteredPlayers.length === 0) {
         container.innerHTML = '<div style="color: #999; text-align: center; font-size: 12px;">אין שחקנים</div>';
         return;
       }
 
       let html = '';
-      players.forEach(player => {
+      filteredPlayers.forEach(player => {
         const isActive = currentFilters.players.has(player.name);
         const playerDisplay = player.club
           ? `${escapeHtml(player.name)} <span class="player-club-info">(${escapeHtml(player.club)})</span>`
@@ -1309,6 +1362,17 @@
       container.innerHTML = html;
     }
 
+    // Function to mark video as watched
+    function markVideoAsWatched(videoId) {
+      watchedVideos.add(videoId);
+      localStorage.setItem('watchedVideos', JSON.stringify([...watchedVideos]));
+    }
+
+    // Function to check if video is watched
+    function isVideoWatched(videoId) {
+      return watchedVideos.has(videoId);
+    }
+
     // Function to render videos
     function renderVideos(videos) {
       const container = document.getElementById('videosContent');
@@ -1345,11 +1409,20 @@
           const thumbnail = getYouTubeThumbnail(video.url);
           const matchUrl = `https://www.tttm.co.il/m/${escapeHtml(video.match)}/`;
           const dateBadge = getDateBadge(video);
+          const videoId = video.id || video.match;
+          const isWatched = isVideoWatched(videoId);
 
           html += `
             <div class="video-card">
               ${dateBadge ? `<span class="video-date-badge ${dateBadge.className}">${dateBadge.label}</span>` : ''}
-              ${thumbnail ? `<a href="${escapeHtml(video.url)}" target="_blank" rel="noopener noreferrer"><img src="${thumbnail}" alt="Video thumbnail" class="video-thumbnail" onerror="this.style.display='none'"></a>` : ''}
+              ${thumbnail ? `
+                <div class="video-thumbnail-container">
+                  <a href="${escapeHtml(video.url)}" target="_blank" rel="noopener noreferrer" onclick="markVideoAsWatched('${videoId}')">
+                    <img src="${thumbnail}" alt="Video thumbnail" class="video-thumbnail" onerror="this.style.display='none'">
+                  </a>
+                  ${isWatched ? '<div class="video-watched-overlay"><div class="video-watched-icon">✓</div></div>' : ''}
+                </div>
+              ` : ''}
               <div class="video-card-content">
                 <div class="match-details">
                   <div class="player-info">
@@ -1366,7 +1439,7 @@
                 </div>
                 <div class="video-footer">
                   <div class="event-tag" onclick="addFilter('events', '${escapeHtml(video.event)}')">${escapeHtml(video.event)}</div>
-                  <a href="${escapeHtml(video.url)}" target="_blank" rel="noopener noreferrer" class="video-link">▶️ צפה בסרטון</a>
+                  <a href="${escapeHtml(video.url)}" target="_blank" rel="noopener noreferrer" class="video-link" onclick="markVideoAsWatched('${videoId}')">▶️ צפה בסרטון</a>
                 </div>
               </div>
             </div>
@@ -1436,6 +1509,12 @@
         showError('שגיאה בטעינת הסרטונים. אנא נסה שוב מאוחר יותר.');
       }
     }
+
+    // Player search input
+    document.getElementById('playerSearchInput').addEventListener('input', (e) => {
+      playerSearchQuery = e.target.value;
+      renderPlayerList(allVideos);
+    });
 
     // Clear filters button
     document.getElementById('clearFiltersBtn').addEventListener('click', clearAllFilters);
