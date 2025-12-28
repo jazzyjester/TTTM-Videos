@@ -991,6 +991,12 @@
           const monthAgo = new Date(today);
           monthAgo.setDate(monthAgo.getDate() - 30);
           return videoDate >= monthAgo;
+        case '2024':
+          return videoDate.getFullYear() === 2024;
+        case '2025':
+          return videoDate.getFullYear() === 2025;
+        case '2026':
+          return videoDate.getFullYear() === 2026;
         default:
           return true;
       }
@@ -1002,7 +1008,10 @@
         today: 0,
         yesterday: 0,
         week: 0,
-        month: 0
+        month: 0,
+        '2024': 0,
+        '2025': 0,
+        '2026': 0
       };
 
       videos.forEach(video => {
@@ -1010,6 +1019,9 @@
         if (isVideoInDateRange(video, 'yesterday')) counts.yesterday++;
         if (isVideoInDateRange(video, 'week')) counts.week++;
         if (isVideoInDateRange(video, 'month')) counts.month++;
+        if (isVideoInDateRange(video, '2024')) counts['2024']++;
+        if (isVideoInDateRange(video, '2025')) counts['2025']++;
+        if (isVideoInDateRange(video, '2026')) counts['2026']++;
       });
 
       return counts;
@@ -1061,7 +1073,10 @@
         { id: 'today', label: 'היום', count: counts.today },
         { id: 'yesterday', label: 'אתמול', count: counts.yesterday },
         { id: 'week', label: '7 ימים אחרונים', count: counts.week },
-        { id: 'month', label: '30 ימים אחרונים', count: counts.month }
+        { id: 'month', label: '30 ימים אחרונים', count: counts.month },
+        { id: '2026', label: '2026', count: counts['2026'] },
+        { id: '2025', label: '2025', count: counts['2025'] },
+        { id: '2024', label: '2024', count: counts['2024'] }
       ];
 
       let html = '';
@@ -1172,7 +1187,10 @@
           'today': 'היום',
           'yesterday': 'אתמול',
           'week': '7 ימים אחרונים',
-          'month': '30 ימים אחרונים'
+          'month': '30 ימים אחרונים',
+          '2026': '2026',
+          '2025': '2025',
+          '2024': '2024'
         };
         html += `
           <div class="filter-tag" onclick="setDateFilter('${currentFilters.dateRange}')">
