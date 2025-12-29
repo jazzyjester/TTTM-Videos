@@ -95,9 +95,10 @@
       border-radius: 4px;
       padding: 20px;
       box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-      height: fit-content;
       position: sticky;
       top: 160px;
+      max-height: calc(100vh - 180px);
+      overflow-y: auto;
     }
 
     .sidebar-title {
@@ -1007,10 +1008,33 @@
         }
       });
 
-      // Convert to array and sort by count (descending)
+      // Convert to array and sort by custom order
       return Array.from(eventMap.entries())
         .map(([name, count]) => ({ name, count }))
-        .sort((a, b) => b.count - a.count);
+        .sort((a, b) => {
+          const aHasLigatAl = a.name.includes('ליגת על');
+          const bHasLigatAl = b.name.includes('ליגת על');
+          const aHasLeumit = a.name.includes('לאומית');
+          const bHasLeumit = b.name.includes('לאומית');
+          const aHasArtzit = a.name.includes('ארצית');
+          const bHasArtzit = b.name.includes('ארצית');
+
+          // Priority: ליגת על > לאומית > ארצית > alphabetical
+          if (aHasLigatAl && !bHasLigatAl) return -1;
+          if (!aHasLigatAl && bHasLigatAl) return 1;
+          if (aHasLigatAl && bHasLigatAl) return a.name.localeCompare(b.name, 'he');
+
+          if (aHasLeumit && !bHasLeumit) return -1;
+          if (!aHasLeumit && bHasLeumit) return 1;
+          if (aHasLeumit && bHasLeumit) return a.name.localeCompare(b.name, 'he');
+
+          if (aHasArtzit && !bHasArtzit) return -1;
+          if (!aHasArtzit && bHasArtzit) return 1;
+          if (aHasArtzit && bHasArtzit) return a.name.localeCompare(b.name, 'he');
+
+          // Neither has priority keywords, sort alphabetically
+          return a.name.localeCompare(b.name, 'he');
+        });
     }
 
     // Function to check if a video is within a date range
@@ -1394,7 +1418,33 @@
       const groupedVideos = groupVideosByEvent(videos);
       let html = '';
 
-      Object.keys(groupedVideos).sort().forEach(eventName => {
+      // Custom sort order for events (by substring matching)
+      const sortedEventNames = Object.keys(groupedVideos).sort((a, b) => {
+        const aHasLigatAl = a.includes('ליגת על');
+        const bHasLigatAl = b.includes('ליגת על');
+        const aHasLeumit = a.includes('לאומית');
+        const bHasLeumit = b.includes('לאומית');
+        const aHasArtzit = a.includes('ארצית');
+        const bHasArtzit = b.includes('ארצית');
+
+        // Priority: ליגת על > לאומית > ארצית > alphabetical
+        if (aHasLigatAl && !bHasLigatAl) return -1;
+        if (!aHasLigatAl && bHasLigatAl) return 1;
+        if (aHasLigatAl && bHasLigatAl) return a.localeCompare(b, 'he');
+
+        if (aHasLeumit && !bHasLeumit) return -1;
+        if (!aHasLeumit && bHasLeumit) return 1;
+        if (aHasLeumit && bHasLeumit) return a.localeCompare(b, 'he');
+
+        if (aHasArtzit && !bHasArtzit) return -1;
+        if (!aHasArtzit && bHasArtzit) return 1;
+        if (aHasArtzit && bHasArtzit) return a.localeCompare(b, 'he');
+
+        // Neither has priority keywords, sort alphabetically
+        return a.localeCompare(b, 'he');
+      });
+
+      sortedEventNames.forEach(eventName => {
         const eventVideos = groupedVideos[eventName];
         html += `
           <div class="event-group">
