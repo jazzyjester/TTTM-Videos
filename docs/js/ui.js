@@ -116,7 +116,7 @@ const UI = {
 
     return `
       <div class="video-card">
-        ${dateBadge ? `<span class="video-date-badge ${dateBadge.className}">${dateBadge.label}</span>` : ''}
+        ${dateBadge ? (dateBadge.className !== 'video-date-badge-date' ? `<span class="video-date-badge ${dateBadge.className}">${dateBadge.label}</span>` : `<span class="video-date-text">${dateBadge.label}</span>`) : ''}
         ${thumbnail ? `
           <div class="video-thumbnail-container">
             <a href="${window.Utils.escapeHtml(video.url)}" target="_blank" rel="noopener noreferrer" onclick="window.Storage.markAsWatched('${videoId}')">

@@ -118,7 +118,13 @@ const Utils = {
     } else if (videoDate >= monthAgo) {
       return { label: 'חודש', className: 'video-date-badge-month' };
     }
-    return null;
+    // If no filter matches, show the actual date
+    const formattedDate = videoDate.toLocaleDateString('he-IL', {
+      day: '2-digit',
+      month: '2-digit',
+      year: '2-digit'
+    });
+    return { label: formattedDate, className: 'video-date-badge-date' };
   }
 };
 
