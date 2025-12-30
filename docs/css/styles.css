@@ -80,13 +80,13 @@ h1 {
   margin: 20px auto;
   padding: 0 20px;
   display: grid;
-  grid-template-columns: 280px 1fr 280px;
+  grid-template-columns: 350px 1fr;
   gap: 20px;
 }
 
 /* Sidebar Styles */
 .sidebar {
-  background: #fff;
+  background: #ffff;
   border: 1px solid #ddd;
   border-radius: 4px;
   padding: 20px;
@@ -104,6 +104,39 @@ h1 {
   margin-bottom: 16px;
   padding-bottom: 12px;
   border-bottom: 2px solid #0066cc;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.collapse-btn {
+  background: none;
+  border: none;
+  color: #0066cc;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-size: 16px;
+  transition: transform 0.3s ease;
+}
+
+.collapse-btn:hover {
+  color: #0052a3;
+}
+
+.collapse-btn.collapsed {
+  transform: rotate(180deg);
+}
+
+.collapsible-content {
+  max-height: 1000px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 1;
+}
+
+.collapsible-content.collapsed {
+  max-height: 0;
+  opacity: 0;
 }
 
 .search-input {
