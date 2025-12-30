@@ -71,14 +71,15 @@ const Utils = {
 
   /**
    * Determine event type from event name
-   * Returns: 'ליגת על', 'לאומית', 'ארצית', or null
+   * Returns: 'ליגת על', 'לאומית', 'ליגה ארצית', or null
    */
   getEventType(eventName) {
     if (!eventName) return null;
 
     if (eventName.includes('על')) return 'ליגת על';
-    if (eventName.includes('לאומית')) return 'לאומית ליגה';
-    if (eventName.includes('ארצית')) return 'ארצית';
+    if (eventName.includes('לאומית')) return 'ליגה לאומית';
+    if (eventName.includes('ארצית')) return 'ליגה ארצית';
+    if (eventName.includes('ליגה א')) return 'ליגה א';
 
     return null;
   },
@@ -88,9 +89,10 @@ const Utils = {
    */
   getEventTypePriority(eventType) {
     const priorities = {
-      'ליגת על': 3,
-      'לאומית ליגה': 2,
-      'ארצית': 1
+      'ליגת על': 4,
+      'ליגה לאומית': 3,
+      'ליגה ארצית': 2,
+      'ליגה א': 1
     };
     return priorities[eventType] || 0;
   },
