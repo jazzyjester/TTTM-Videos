@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no">
-  <title>תחרויות טניס השולחן בישראל - סרטוני משחקים</title>
+  <title>טנ"ש ישראלי - סרטונים</title>
   <link rel="shortcut icon" href="https://www.tttm.co.il/favicon.ico">
 
   <!-- Google tag (gtag.js) -->
@@ -16,6 +16,9 @@
     gtag('config', 'G-H0GG11C76Z');
   </script>
 
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
   <!-- External CSS -->
   <link rel="stylesheet" href="css/styles.css">
 </head>
@@ -24,11 +27,11 @@
   <!-- Header -->
   <div class="header">
     <div class="header-content">
-      <h1>תחרויות טניס השולחן בישראל - סרטוני משחקים</h1>
+      <h1>טנ"ש ישראלי - סרטונים</h1>
       <p class="subtitle">כל הסרטונים שהועלו, ממוינים לפי אירוע ותאריך</p>
       <div class="header-links">
         <a href="https://www.youtube.com/@TableTennisIsrael" target="_blank" rel="noopener noreferrer" class="header-link">
-          <span class="header-link-icon">▶️</span>
+          <span class="header-link-icon"><i class="fa-brands fa-square-youtube"></i></span>
           <span>ערוץ היוטיוב שלנו</span>
         </a>
         <a href="https://www.tttm.co.il" target="_blank" rel="noopener noreferrer" class="header-link">
@@ -55,13 +58,46 @@
 
   <!-- Main Container -->
   <div class="main-container">
-    <!-- Left Sidebar with clubs and events list -->
+     <!-- Left Sidebar with clubs and events list -->
+         <!-- Right Sidebar with all filters -->
     <div class="sidebar">
-      <div class="sidebar-title">סינון לפי מועדון</div>
-      <div id="clubList" class="list-container"></div>
-
-      <div class="sidebar-title" style="margin-top: 24px;">סינון לפי אירוע</div>
-      <div id="eventList" class="list-container"></div>
+      <div class="sidebar-title" style="margin-top: 24px;">
+        <span>סינון לפי שחקן</span>
+        <button class="collapse-btn collapsed" onclick="toggleCollapse('playerSection')">
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+      </div>
+      <div id="playerSection" class="collapsible-content collapsed">
+        <input type="text" id="playerSearchInput" class="search-input" placeholder="חפש שחקן...">
+        <div id="playerList" class="list-container"></div>
+      </div>
+      <div class="sidebar-title" style="margin-top: 24px;">
+        <span>סינון לפי מועדון</span>
+        <button class="collapse-btn collapsed" onclick="toggleCollapse('clubSection')">
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+      </div>
+      <div id="clubSection" class="collapsible-content collapsed">
+        <div id="clubList" class="list-container"></div>
+      </div>
+       <div class="sidebar-title" style="margin-top: 24px;">
+        <span>סינון לפי אירוע</span>
+        <button class="collapse-btn collapsed" onclick="toggleCollapse('eventSection')">
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+      </div>
+      <div id="eventSection" class="collapsible-content collapsed">
+        <div id="eventList" class="list-container"></div>
+      </div>
+      <div class="sidebar-title" style="margin-top: 24px;">
+        <span>סינון לפי תאריך</span>
+        <button class="collapse-btn collapsed" onclick="toggleCollapse('dateSection')">
+          <i class="fa-solid fa-chevron-down"></i>
+        </button>
+      </div>
+      <div id="dateSection" class="collapsible-content collapsed">
+        <div id="dateRangeList"></div>
+      </div>
     </div>
 
     <!-- Main content area -->
@@ -104,16 +140,6 @@
         </div>
       </div>
     </div>
-
-    <!-- Right Sidebar with player list and date filter -->
-    <div class="sidebar">
-      <div class="sidebar-title">סינון לפי שחקן</div>
-      <input type="text" id="playerSearchInput" class="search-input" placeholder="חפש שחקן...">
-      <div id="playerList" class="list-container"></div>
-
-      <div class="sidebar-title" style="margin-top: 24px;">סינון לפי תאריך</div>
-      <div id="dateRangeList"></div>
-    </div>
   </div>
 
   <!-- About Section -->
@@ -134,6 +160,42 @@
       </p>
     </div>
   </div>
+
+  <!-- Collapse Toggle Function -->
+  <script>
+    function toggleCollapse(sectionId) {
+      const section = document.getElementById(sectionId);
+      const button = event.currentTarget;
+      const icon = button.querySelector('i');
+      
+      section.classList.toggle('collapsed');
+      button.classList.toggle('collapsed');
+      
+      if (section.classList.contains('collapsed')) {
+        icon.className = 'fa-solid fa-chevron-down';
+      } else {
+        icon.className = 'fa-solid fa-chevron-up';
+      }
+    }
+  </script>
+
+  <!-- Collapse Toggle Function -->
+  <script>
+    function toggleCollapse(sectionId) {
+      const section = document.getElementById(sectionId);
+      const button = event.currentTarget;
+      const icon = button.querySelector('i');
+      
+      section.classList.toggle('collapsed');
+      button.classList.toggle('collapsed');
+      
+      if (section.classList.contains('collapsed')) {
+        icon.className = 'fa-solid fa-chevron-down';
+      } else {
+        icon.className = 'fa-solid fa-chevron-up';
+      }
+    }
+  </script>
 
   <!-- External JavaScript - Load in correct order -->
   <script src="js/config.js"></script>
