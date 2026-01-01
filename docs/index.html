@@ -66,7 +66,7 @@
          <!-- Right Sidebar with all filters -->
     <div class="sidebar">
       <div class="sidebar-title" style="margin-top: 24px; cursor: pointer;" onclick="toggleCollapse('playerSection')">
-        <span>סינון לפי שחקן</span>
+        <span>סינון לפי שחקן<span class="filter-indicator" id="playerFilterIndicator"></span></span>
         <button class="collapse-btn collapsed">
           <i class="fa-solid fa-chevron-down"></i>
         </button>
@@ -76,7 +76,7 @@
         <div id="playerList" class="list-container"></div>
       </div>
       <div class="sidebar-title" style="margin-top: 24px; cursor: pointer;" onclick="toggleCollapse('clubSection')">
-        <span>סינון לפי מועדון</span>
+        <span>סינון לפי מועדון<span class="filter-indicator" id="clubFilterIndicator"></span></span>
         <button class="collapse-btn collapsed">
           <i class="fa-solid fa-chevron-down"></i>
         </button>
@@ -85,7 +85,7 @@
         <div id="clubList" class="list-container"></div>
       </div>
        <div class="sidebar-title" style="margin-top: 24px; cursor: pointer;" onclick="toggleCollapse('eventSection')">
-        <span>סינון לפי אירוע</span>
+        <span>סינון לפי אירוע<span class="filter-indicator" id="eventFilterIndicator"></span></span>
         <button class="collapse-btn collapsed">
           <i class="fa-solid fa-chevron-down"></i>
         </button>
@@ -94,7 +94,7 @@
         <div id="eventList" class="list-container"></div>
       </div>
       <div class="sidebar-title" style="margin-top: 24px; cursor: pointer;" onclick="toggleCollapse('dateSection')">
-        <span>סינון לפי תאריך</span>
+        <span>סינון לפי תאריך<span class="filter-indicator" id="dateFilterIndicator"></span></span>
         <button class="collapse-btn collapsed">
           <i class="fa-solid fa-chevron-down"></i>
         </button>

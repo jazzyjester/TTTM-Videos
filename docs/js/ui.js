@@ -243,14 +243,10 @@ const UI = {
 
     // Add event listeners
     container.querySelectorAll('.list-item').forEach(item => {
-      item.addEventListener('click', function(event) {
+      item.addEventListener('click', function() {
         const type = this.getAttribute('data-filter-type');
         const value = this.getAttribute('data-filter-value');
-        if (type === 'players') {
-          window.UI.showPlayerMenu(event, value);
-        } else {
-          window.Filters.addFilter(type, value);
-        }
+        window.Filters.addFilter(type, value);
       });
     });
   },
@@ -399,6 +395,36 @@ const UI = {
   },
 
   /**
+   * Update filter header indicators
+   */
+  updateFilterHeaderIndicators() {
+    const playerIndicator = document.getElementById('playerFilterIndicator');
+    const clubIndicator = document.getElementById('clubFilterIndicator');
+    const eventIndicator = document.getElementById('eventFilterIndicator');
+    const dateIndicator = document.getElementById('dateFilterIndicator');
+
+    // Update player filter indicator
+    if (playerIndicator) {
+      playerIndicator.textContent = window.Filters.state.players.size > 0 ? window.Filters.state.players.size : '';
+    }
+
+    // Update club filter indicator
+    if (clubIndicator) {
+      clubIndicator.textContent = window.Filters.state.clubs.size > 0 ? window.Filters.state.clubs.size : '';
+    }
+
+    // Update event filter indicator
+    if (eventIndicator) {
+      eventIndicator.textContent = window.Filters.state.events.size > 0 ? window.Filters.state.events.size : '';
+    }
+
+    // Update date filter indicator
+    if (dateIndicator) {
+      dateIndicator.textContent = window.Filters.state.dateRange !== null ? '1' : '';
+    }
+  },
+
+  /**
    * Update filter display
    */
   updateFilterDisplay() {
@@ -409,6 +435,9 @@ const UI = {
                       window.Filters.state.clubs.size > 0 ||
                       window.Filters.state.events.size > 0 ||
                       window.Filters.state.dateRange !== null;
+
+    // Update filter header indicators
+    this.updateFilterHeaderIndicators();
 
     if (!hasFilters) {
       filterSection.style.display = 'none';
