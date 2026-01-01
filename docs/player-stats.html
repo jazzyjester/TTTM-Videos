@@ -295,6 +295,159 @@
       margin: 0 auto;
       padding: 20px;
     }
+
+    /* Mobile Responsive Styles */
+    @media (max-width: 768px) {
+      .main-content {
+        padding: 12px;
+      }
+
+      .player-header {
+        padding: 20px 16px;
+      }
+
+      .player-name-title {
+        font-size: 24px;
+      }
+
+      .player-club-title {
+        font-size: 16px;
+      }
+
+      .player-subtitle {
+        font-size: 12px;
+      }
+
+      .stats-overview {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+
+      .stat-box {
+        padding: 16px;
+      }
+
+      .stat-box-number {
+        font-size: 32px;
+      }
+
+      .stat-box-label {
+        font-size: 12px;
+      }
+
+      .section-box {
+        padding: 16px;
+      }
+
+      .section-box-title {
+        font-size: 18px;
+      }
+
+      .performance-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .performance-stats {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .recent-match {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .match-thumbnail-link {
+        width: 100%;
+      }
+
+      .match-thumbnail {
+        width: 100%;
+        height: auto;
+        aspect-ratio: 16/9;
+      }
+
+      .match-info {
+        order: 2;
+      }
+
+      .match-date-badge {
+        order: 1;
+      }
+
+      .match-result {
+        order: 3;
+        width: 100%;
+      }
+
+      .back-button {
+        padding: 8px 16px;
+        font-size: 13px;
+      }
+
+      .win-bar {
+        width: 80px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .player-name-title {
+        font-size: 20px;
+      }
+
+      .player-club-title {
+        font-size: 14px;
+      }
+
+      .stats-overview {
+        grid-template-columns: 1fr;
+      }
+
+      .stat-box-number {
+        font-size: 28px;
+      }
+
+      .section-box {
+        padding: 12px;
+      }
+
+      .section-box-title {
+        font-size: 16px;
+        margin-bottom: 16px;
+      }
+
+      .performance-name {
+        font-size: 14px;
+      }
+
+      .performance-stats {
+        font-size: 12px;
+        gap: 12px;
+      }
+
+      .recent-match {
+        padding: 12px;
+      }
+
+      .match-opponent {
+        font-size: 15px;
+      }
+
+      .match-event {
+        font-size: 11px;
+      }
+
+      .match-result {
+        font-size: 14px;
+        padding: 6px 12px;
+      }
+
+      .win-bar {
+        width: 60px;
+      }
+    }
   </style>
 </head>
 
