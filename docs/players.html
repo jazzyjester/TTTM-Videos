@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, user-scalable=no">
+  <title>שחקנים - טנ"ש ישראלי</title>
+  <link rel="shortcut icon" href="https://www.tttm.co.il/favicon.ico">
+
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-H0GG11C76Z"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-H0GG11C76Z');
+  </script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- External CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    .back-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      background: #0066cc;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 14px;
+      font-weight: bold;
+      transition: all 0.2s;
+      margin-bottom: 20px;
+    }
+
+    .back-button:hover {
+      background: #0052a3;
+      transform: translateY(-2px);
+    }
+
+    .players-header {
+      background: white;
+      padding: 30px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .players-title {
+      font-size: 36px;
+      font-weight: bold;
+      color: #0066cc;
+      margin-bottom: 12px;
+    }
+
+    .players-subtitle {
+      font-size: 16px;
+      color: #666;
+    }
+
+    .search-container {
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 16px;
+      font-size: 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 4px;
+      transition: border-color 0.2s;
+    }
+
+    .search-input:focus {
+      outline: none;
+      border-color: #0066cc;
+    }
+
+    .players-list {
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .player-row {
+      display: grid;
+      grid-template-columns: 60px 1fr auto auto;
+      gap: 16px;
+      padding: 16px;
+      background: #f8f9fa;
+      border-radius: 6px;
+      margin-bottom: 8px;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .player-row:hover {
+      background: #e3f2fd;
+      transform: translateX(-4px);
+    }
+
+    .player-rank {
+      font-size: 18px;
+      font-weight: bold;
+      color: #0066cc;
+      text-align: center;
+    }
+
+    .player-name {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .player-name .club {
+      font-size: 14px;
+      font-weight: 400;
+      color: #666;
+    }
+
+    .player-videos {
+      font-size: 14px;
+      color: #666;
+      padding: 6px 12px;
+      background: white;
+      border-radius: 4px;
+    }
+
+    .player-ranking {
+      font-size: 14px;
+      color: #0066cc;
+      font-weight: bold;
+      padding: 6px 12px;
+      background: #e3f2fd;
+      border-radius: 4px;
+    }
+
+    .loading {
+      text-align: center;
+      padding: 60px 20px;
+      color: #0066cc;
+      font-size: 18px;
+    }
+
+    .no-data {
+      text-align: center;
+      padding: 40px;
+      color: #999;
+      font-size: 16px;
+    }
+
+    .main-content {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .stats-summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .stat-box {
+      background: white;
+      padding: 24px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .stat-box-number {
+      font-size: 42px;
+      font-weight: bold;
+      color: #0066cc;
+      margin-bottom: 8px;
+    }
+
+    .stat-box-label {
+      font-size: 14px;
+      color: #666;
+      font-weight: 600;
+    }
+  </style>
+</head>
+
+<body dir="rtl">
+  <!-- Header -->
+  <div class="header">
+    <div class="header-content">
+      <h1>שחקנים</h1>
+      <p class="subtitle">כל השחקנים במערכת</p>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <a href="index.html" class="back-button">
+      <i class="fa-solid fa-arrow-right"></i>
+      <span>חזרה לדף הראשי</span>
+    </a>
+
+    <div id="loadingContainer" class="loading">טוען נתונים...</div>
+    <div id="errorContainer"></div>
+    <div id="playersContent" style="display: none;">
+      <!-- Stats Summary -->
+      <div class="stats-summary">
+        <div class="stat-box">
+          <div class="stat-box-number" id="totalPlayers">0</div>
+          <div class="stat-box-label">סה"כ שחקנים</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-number" id="totalVideos">0</div>
+          <div class="stat-box-label">סה"כ סרטונים</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-box-number" id="rankedPlayers">0</div>
+          <div class="stat-box-label">שחקנים מדורגים</div>
+        </div>
+      </div>
+
+      <!-- Search -->
+      <div class="search-container">
+        <input type="text" id="playerSearch" class="search-input" placeholder="חפש שחקן...">
+      </div>
+
+      <!-- Players List -->
+      <div class="players-list">
+        <div id="playersList"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- External JavaScript - Load in correct order -->
+  <script src="js/config.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/api.js"></script>
+  <script src="js/players.js"></script>
+</body>
+</html>
