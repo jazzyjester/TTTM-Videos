@@ -26,6 +26,7 @@ const UI = {
     this.renderClubList(this.allVideos);
     this.renderEventList(this.allVideos);
     this.renderDateRangeList(this.allVideos);
+    this.renderGameTypeList(this.allVideos);
   },
 
   /**
@@ -430,6 +431,43 @@ const UI = {
   },
 
   /**
+   * Render game type list
+   */
+  renderGameTypeList(videos) {
+    const container = document.getElementById('gameTypeList');
+
+    // Count singles and doubles
+    let singlesCount = 0;
+    let doublesCount = 0;
+
+    videos.forEach(video => {
+      if (window.Filters.isDoublesGame(video)) {
+        doublesCount++;
+      } else {
+        singlesCount++;
+      }
+    });
+
+    const gameTypes = [
+      { id: 'singles', label: 'משחקים רגילים', count: singlesCount },
+      { id: 'doubles', label: 'משחקי זוגות', count: doublesCount }
+    ];
+
+    let html = '';
+    gameTypes.forEach(type => {
+      const isActive = window.Filters.state.gameType === type.id;
+      html += `
+        <div class="date-filter-item ${isActive ? 'active' : ''}" onclick="window.Filters.setGameTypeFilter('${type.id}')">
+          <span>${type.label}</span>
+          <span class="item-count">${type.count}</span>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+  },
+
+  /**
    * Update filter header indicators
    */
   updateFilterHeaderIndicators() {
@@ -437,6 +475,7 @@ const UI = {
     const clubIndicator = document.getElementById('clubFilterIndicator');
     const eventIndicator = document.getElementById('eventFilterIndicator');
     const dateIndicator = document.getElementById('dateFilterIndicator');
+    const gameTypeIndicator = document.getElementById('gameTypeFilterIndicator');
 
     // Update player filter indicator
     if (playerIndicator) {
@@ -457,6 +496,11 @@ const UI = {
     if (dateIndicator) {
       dateIndicator.textContent = window.Filters.state.dateRange !== null ? '1' : '';
     }
+
+    // Update game type filter indicator
+    if (gameTypeIndicator) {
+      gameTypeIndicator.textContent = window.Filters.state.gameType !== null ? '1' : '';
+    }
   },
 
   /**
@@ -469,7 +513,8 @@ const UI = {
     const hasFilters = window.Filters.state.players.size > 0 ||
                       window.Filters.state.clubs.size > 0 ||
                       window.Filters.state.events.size > 0 ||
-                      window.Filters.state.dateRange !== null;
+                      window.Filters.state.dateRange !== null ||
+                      window.Filters.state.gameType !== null;
 
     // Update filter header indicators
     this.updateFilterHeaderIndicators();
@@ -488,6 +533,17 @@ const UI = {
       html += `
         <div class="filter-tag" data-filter-type="dateRange" data-filter-value="${window.Filters.state.dateRange}">
           <span>תאריך: ${label}</span>
+          <span class="remove-icon">×</span>
+        </div>
+      `;
+    }
+
+    // Game type filter
+    if (window.Filters.state.gameType) {
+      const gameTypeLabel = window.Filters.state.gameType === 'singles' ? 'משחקים רגילים' : 'משחקי זוגות';
+      html += `
+        <div class="filter-tag" data-filter-type="gameType" data-filter-value="${window.Filters.state.gameType}">
+          <span>סוג משחק: ${gameTypeLabel}</span>
           <span class="remove-icon">×</span>
         </div>
       `;
@@ -532,6 +588,8 @@ const UI = {
         const value = this.getAttribute('data-filter-value');
         if (type === 'dateRange') {
           window.Filters.setDateFilter(value);
+        } else if (type === 'gameType') {
+          window.Filters.setGameTypeFilter(value);
         } else {
           window.Filters.removeFilter(type, value);
         }

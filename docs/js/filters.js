@@ -9,7 +9,8 @@ const Filters = {
     players: new Set(),
     clubs: new Set(),
     events: new Set(),
-    dateRange: null
+    dateRange: null,
+    gameType: null // 'singles', 'doubles', or null (all)
   },
 
   // Player search query
@@ -65,6 +66,31 @@ const Filters = {
   },
 
   /**
+   * Set game type filter (toggle)
+   */
+  setGameTypeFilter(type) {
+    // Toggle: if clicking same filter, remove it
+    if (this.state.gameType === type) {
+      this.state.gameType = null;
+    } else {
+      this.state.gameType = type;
+    }
+
+    if (window.UI) {
+      window.UI.updateFilterDisplay();
+      window.UI.renderContent();
+    }
+  },
+
+  /**
+   * Check if video is a doubles game
+   */
+  isDoublesGame(video) {
+    return (video.currentPlayer && video.currentPlayer.includes(':')) ||
+           (video.opponentPlayer && video.opponentPlayer.includes(':'));
+  },
+
+  /**
    * Clear all filters
    */
   clearAll() {
@@ -72,6 +98,7 @@ const Filters = {
     this.state.clubs.clear();
     this.state.events.clear();
     this.state.dateRange = null;
+    this.state.gameType = null;
 
     if (window.UI) {
       window.UI.updateFilterDisplay();
@@ -103,7 +130,8 @@ const Filters = {
     if (this.state.players.size === 0 &&
         this.state.clubs.size === 0 &&
         this.state.events.size === 0 &&
-        !this.state.dateRange) {
+        !this.state.dateRange &&
+        !this.state.gameType) {
       return videos;
     }
 
@@ -130,6 +158,13 @@ const Filters = {
       // Check date range filter
       if (this.state.dateRange) {
         if (!window.Data.isVideoInDateRange(video, this.state.dateRange)) return false;
+      }
+
+      // Check game type filter
+      if (this.state.gameType) {
+        const isDoubles = this.isDoublesGame(video);
+        if (this.state.gameType === 'doubles' && !isDoubles) return false;
+        if (this.state.gameType === 'singles' && isDoubles) return false;
       }
 
       return true;
