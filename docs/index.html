@@ -44,7 +44,7 @@
         </a>
         <a href="#" onclick="addToFavorites(); return false;" class="header-link" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; font-weight: bold;">
           <span class="header-link-icon">⭐</span>
-          <span>הוסף למועדפים</span>
+          <span>הסבר הוספה למועדפים</span>
         </a>
         <!-- Temporarily disabled
         <a href="https://chromewebstore.google.com/detail/nefnohhenhjfhgnlccpondodfbepfema?utm_source=item-share-cb" target="_blank" rel="noopener noreferrer" class="header-link">
@@ -141,6 +141,59 @@
             <div class="stat-number" id="totalClubs">0</div>
             <div class="stat-label">מועדונים</div>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Favorites Modal -->
+  <div id="favoritesModal" class="modal-overlay" style="display: none;">
+    <div class="modal-content">
+      <button class="modal-close" onclick="closeFavoritesModal()">×</button>
+      <div class="modal-header">
+        <div class="modal-icon">⭐</div>
+        <h2>הוסף את האתר למועדפים</h2>
+      </div>
+      <div class="modal-body">
+        <p class="modal-description">שמור גישה מהירה לאתר על ידי הוספתו למועדפים בדפדפן שלך</p>
+
+        <div class="instructions-section">
+          <div class="instruction-item">
+            <div class="instruction-icon">💻</div>
+            <div class="instruction-text">
+              <strong>Chrome / Edge / Firefox:</strong>
+              <br>לחץ <kbd>Ctrl+D</kbd> (Windows) או <kbd>Cmd+D</kbd> (Mac)
+            </div>
+          </div>
+          <div class="instruction-item">
+            <div class="instruction-icon">🍎</div>
+            <div class="instruction-text">
+              <strong>Safari:</strong>
+              <br>לחץ <kbd>Cmd+D</kbd>
+            </div>
+          </div>
+          <div class="instruction-item">
+            <div class="instruction-icon">⭐</div>
+            <div class="instruction-text">
+              <strong>דרך נוספת:</strong>
+              <br>השתמש בכפתור הכוכב בסרגל הכתובות
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="modal-btn modal-btn-primary" onclick="closeFavoritesModal()">
+          <i class="fa-solid fa-check"></i>
+          הבנתי, תודה
+        </button>
+        <div class="modal-video-section">
+          <div class="modal-video-title">צפה בסרטון הדרכה:</div>
+          <a href="https://www.youtube.com/shorts/ITKsDAMkhXE" target="_blank" rel="noopener noreferrer" class="modal-video-thumbnail" onclick="closeFavoritesModal()">
+            <img src="https://img.youtube.com/vi/ITKsDAMkhXE/mqdefault.jpg" alt="סרטון הדרכה" class="modal-video-img">
+            <div class="modal-video-play">
+              <i class="fa-solid fa-play"></i>
+            </div>
+          </a>
         </div>
       </div>
     </div>
