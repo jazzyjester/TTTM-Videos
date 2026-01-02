@@ -80,6 +80,23 @@ const Filters = {
   },
 
   /**
+   * Check if player matches filter (supports doubles)
+   */
+  matchesPlayerFilter(playerNames) {
+    if (!playerNames) return false;
+
+    // Check if it's a doubles game (contains ':')
+    if (playerNames.includes(':')) {
+      // Split and check if any player is in the filter
+      const names = playerNames.split(':').map(n => n.trim());
+      return names.some(name => this.state.players.has(name));
+    }
+
+    // Single player - direct check
+    return this.state.players.has(playerNames);
+  },
+
+  /**
    * Apply filters to videos
    */
   applyFilters(videos) {
@@ -91,10 +108,10 @@ const Filters = {
     }
 
     return videos.filter(video => {
-      // Check player filter
+      // Check player filter (supports doubles)
       if (this.state.players.size > 0) {
-        const hasPlayer = this.state.players.has(video.currentPlayer) ||
-                         this.state.players.has(video.opponentPlayer);
+        const hasPlayer = this.matchesPlayerFilter(video.currentPlayer) ||
+                         this.matchesPlayerFilter(video.opponentPlayer);
         if (!hasPlayer) return false;
       }
 

@@ -88,12 +88,13 @@ const UI = {
 
     container.innerHTML = html;
 
-    // Add event listeners for player names - show menu
-    container.querySelectorAll('.player-name').forEach(element => {
+    // Add event listeners for player names - show menu (supports both singles and doubles)
+    container.querySelectorAll('.player-name-clickable').forEach(element => {
       element.addEventListener('click', function(event) {
         const value = this.getAttribute('data-filter-value');
+        const playerId = this.getAttribute('data-player-id');
         if (value) {
-          window.UI.showPlayerMenu(event, value);
+          window.UI.showPlayerMenu(event, value, playerId);
         }
       });
     });
@@ -111,6 +112,33 @@ const UI = {
   },
 
   /**
+   * Helper function to render player names (supports doubles)
+   */
+  renderPlayerNames(playerNames, playerIds, isFiltered) {
+    if (!playerNames) return '';
+
+    // Check if it's a doubles game
+    const isDoubles = playerNames.includes(':');
+
+    if (isDoubles) {
+      const names = playerNames.split(':').map(n => n.trim());
+      const ids = playerIds ? playerIds.split(':').map(id => id.trim()) : [];
+
+      return names.map((name, index) => {
+        const playerId = ids[index] || '';
+        // Check if THIS specific player is in the filter (not the whole pair)
+        const isThisPlayerFiltered = window.Filters.state.players.has(name);
+        const highlightClass = isThisPlayerFiltered ? 'filter-highlight' : '';
+        return `<span class="player-name player-name-clickable" data-filter-type="players" data-filter-value="${window.Utils.escapeHtml(name)}" data-player-id="${playerId}">${highlightClass ? `<span class="${highlightClass}">${window.Utils.escapeHtml(name)}</span>` : window.Utils.escapeHtml(name)}</span>`;
+      }).join(', ');
+    }
+
+    // Single player
+    const highlightClass = isFiltered ? 'filter-highlight' : '';
+    return `<span class="player-name player-name-clickable" data-filter-type="players" data-filter-value="${window.Utils.escapeHtml(playerNames)}" data-player-id="${playerIds || ''}">${highlightClass ? `<span class="${highlightClass}">${window.Utils.escapeHtml(playerNames)}</span>` : window.Utils.escapeHtml(playerNames)}</span>`;
+  },
+
+  /**
    * Render a single video card
    */
   renderVideoCard(video) {
@@ -122,11 +150,19 @@ const UI = {
     const isScoreRevealed = window.Storage.isScoreRevealed(videoId);
 
     // Check if fields match active filters for highlighting
-    const isCurrentPlayerFiltered = window.Filters.state.players.has(video.currentPlayer);
-    const isOpponentPlayerFiltered = window.Filters.state.players.has(video.opponentPlayer);
+    // For doubles, check if any player is filtered
+    const currentPlayerNames = video.currentPlayer ? video.currentPlayer.split(':').map(n => n.trim()) : [];
+    const opponentPlayerNames = video.opponentPlayer ? video.opponentPlayer.split(':').map(n => n.trim()) : [];
+
+    const isCurrentPlayerFiltered = currentPlayerNames.some(name => window.Filters.state.players.has(name));
+    const isOpponentPlayerFiltered = opponentPlayerNames.some(name => window.Filters.state.players.has(name));
     const isCurrentClubFiltered = window.Filters.state.clubs.has(video.currentPlayerClub);
     const isOpponentClubFiltered = window.Filters.state.clubs.has(video.opponentClub);
     const isEventFiltered = window.Filters.state.events.has(video.event);
+
+    // Render player names with doubles support
+    const currentPlayerHtml = this.renderPlayerNames(video.currentPlayer, video.currentPlayerId, isCurrentPlayerFiltered);
+    const opponentPlayerHtml = this.renderPlayerNames(video.opponentPlayer, video.opponentPlayerId, isOpponentPlayerFiltered);
 
     return `
       <div class="video-card">
@@ -142,9 +178,9 @@ const UI = {
         <div class="video-card-content">
           <div class="match-details">
             <div class="player-info">
-              ${video.currentPlayer ? `<div class="player-name" data-filter-type="players" data-filter-value="${window.Utils.escapeHtml(video.currentPlayer)}" data-player-id="${video.currentPlayerId || ''}">${isCurrentPlayerFiltered ? `<span class="filter-highlight">${window.Utils.escapeHtml(video.currentPlayer)}</span>` : window.Utils.escapeHtml(video.currentPlayer)}</div>` : ''}
+              ${currentPlayerHtml ? `<div class="players-container">${currentPlayerHtml}</div>` : ''}
               ${video.currentPlayerClub ? `<div class="club-name" data-filter-type="clubs" data-filter-value="${window.Utils.escapeHtml(video.currentPlayerClub)}">${isCurrentClubFiltered ? `<span class="filter-highlight">${window.Utils.escapeHtml(video.currentPlayerClub)}</span>` : window.Utils.escapeHtml(video.currentPlayerClub)}</div>` : ''}
-              ${video.currentPlayerRanking ? `<div style="font-size: 11px; color: #666; margin-top: 2px;">דירוג: ${window.Utils.escapeHtml(video.currentPlayerRanking)}</div>` : ''}
+              ${video.currentPlayerRanking && !video.currentPlayer.includes(':') ? `<div style="font-size: 11px; color: #666; margin-top: 2px;">דירוג: ${window.Utils.escapeHtml(video.currentPlayerRanking)}</div>` : ''}
             </div>
             <div class="vs-divider">
               ${video.score ? `
@@ -154,9 +190,9 @@ const UI = {
               ` : '<div>VS</div>'}
             </div>
             <div class="player-info">
-              ${video.opponentPlayer ? `<div class="player-name" data-filter-type="players" data-filter-value="${window.Utils.escapeHtml(video.opponentPlayer)}" data-player-id="${video.opponentPlayerId || ''}">${isOpponentPlayerFiltered ? `<span class="filter-highlight">${window.Utils.escapeHtml(video.opponentPlayer)}</span>` : window.Utils.escapeHtml(video.opponentPlayer)}</div>` : ''}
+              ${opponentPlayerHtml ? `<div class="players-container">${opponentPlayerHtml}</div>` : ''}
               ${video.opponentClub ? `<div class="club-name" data-filter-type="clubs" data-filter-value="${window.Utils.escapeHtml(video.opponentClub)}">${isOpponentClubFiltered ? `<span class="filter-highlight">${window.Utils.escapeHtml(video.opponentClub)}</span>` : window.Utils.escapeHtml(video.opponentClub)}</div>` : ''}
-              ${video.opponentRanking ? `<div style="font-size: 11px; color: #666; margin-top: 2px;">דירוג: ${window.Utils.escapeHtml(video.opponentRanking)}</div>` : ''}
+              ${video.opponentRanking && !video.opponentPlayer.includes(':') ? `<div style="font-size: 11px; color: #666; margin-top: 2px;">דירוג: ${window.Utils.escapeHtml(video.opponentRanking)}</div>` : ''}
             </div>
           </div>
           <div class="video-footer">
@@ -504,7 +540,7 @@ const UI = {
   },
 
   /**
-   * Update statistics
+   * Update statistics (supports doubles)
    */
   updateStatistics(videos) {
     document.getElementById('totalVideos').textContent = videos.length;
@@ -514,8 +550,21 @@ const UI = {
     const events = new Set();
 
     videos.forEach(video => {
-      if (video.currentPlayer) players.add(video.currentPlayer);
-      if (video.opponentPlayer) players.add(video.opponentPlayer);
+      // Handle doubles - split by ':' and add each player
+      if (video.currentPlayer) {
+        if (video.currentPlayer.includes(':')) {
+          video.currentPlayer.split(':').forEach(name => players.add(name.trim()));
+        } else {
+          players.add(video.currentPlayer);
+        }
+      }
+      if (video.opponentPlayer) {
+        if (video.opponentPlayer.includes(':')) {
+          video.opponentPlayer.split(':').forEach(name => players.add(name.trim()));
+        } else {
+          players.add(video.opponentPlayer);
+        }
+      }
       if (video.currentPlayerClub) clubs.add(video.currentPlayerClub);
       if (video.opponentClub) clubs.add(video.opponentClub);
       if (video.event) events.add(video.event);
@@ -559,12 +608,17 @@ const UI = {
   /**
    * Show player context menu
    */
-  showPlayerMenu(event, playerName) {
+  showPlayerMenu(event, playerName, playerId) {
     event.preventDefault();
     event.stopPropagation();
 
-    // Get player ID from the clicked element
-    const playerId = event.target.closest('.player-name')?.getAttribute('data-player-id') || '';
+    // Use provided playerId or try to get from element
+    if (!playerId) {
+      playerId = event.target.closest('.player-name-clickable')?.getAttribute('data-player-id') || '';
+    }
+
+    // Debug: Log player info
+    console.log('Player menu opened:', { playerName, playerId });
 
     // Remove any existing menu
     const existingMenu = document.querySelector('.player-context-menu');
@@ -589,7 +643,7 @@ const UI = {
     `;
 
     // Add TTTM link option if we have a player ID
-    if (playerId) {
+    if (playerId && playerId.trim()) {
       menuHTML += `
       <div class="player-menu-item" data-action="tttm">
         <i class="fa-solid fa-external-link"></i>
@@ -602,9 +656,40 @@ const UI = {
 
     // Position menu near click
     document.body.appendChild(menu);
-    const rect = event.target.getBoundingClientRect();
-    menu.style.top = `${rect.bottom + window.scrollY + 5}px`;
-    menu.style.left = `${rect.left + window.scrollX}px`;
+
+    // Get the actual player element (not inner span)
+    const playerElement = event.target.closest('.player-name-clickable') || event.target;
+    const rect = playerElement.getBoundingClientRect();
+
+    // Get menu dimensions
+    const menuRect = menu.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+
+    // Calculate position using viewport coordinates (position: fixed uses viewport)
+    let top = rect.bottom + 5;
+    let left = rect.left;
+
+    // Adjust horizontal position if menu goes off-screen
+    if (left + menuRect.width > viewportWidth) {
+      left = viewportWidth - menuRect.width - 10;
+    }
+    if (left < 10) {
+      left = 10;
+    }
+
+    // Adjust vertical position if menu goes off-screen
+    if (top + menuRect.height > viewportHeight) {
+      // Show above the element instead
+      top = rect.top - menuRect.height - 5;
+    }
+    if (top < 10) {
+      top = 10;
+    }
+
+    // Use viewport coordinates directly (menu is position: fixed)
+    menu.style.top = `${top}px`;
+    menu.style.left = `${left}px`;
 
     // Add event listeners to menu items
     menu.querySelectorAll('.player-menu-item').forEach(item => {

@@ -30,6 +30,48 @@ const Data = {
   },
 
   /**
+   * Helper function to process a player (supports doubles)
+   */
+  processPlayer(playerName, club, eventType, playerMap) {
+    // Check if it's a doubles game (contains ':')
+    if (playerName && playerName.includes(':')) {
+      // Split by ':' and process each player separately
+      const playerNames = playerName.split(':').map(n => n.trim());
+      playerNames.forEach(name => {
+        this.addPlayerToMap(name, club, eventType, playerMap);
+      });
+    } else if (playerName) {
+      // Single player
+      this.addPlayerToMap(playerName, club, eventType, playerMap);
+    }
+  },
+
+  /**
+   * Helper function to add a single player to the map
+   */
+  addPlayerToMap(playerName, club, eventType, playerMap) {
+    if (!playerMap.has(playerName)) {
+      playerMap.set(playerName, { count: 0, clubs: new Map(), eventType: null });
+    }
+    const playerData = playerMap.get(playerName);
+    playerData.count++;
+
+    if (club) {
+      const clubCount = playerData.clubs.get(club) || 0;
+      playerData.clubs.set(club, clubCount + 1);
+    }
+
+    // Keep the highest priority event type
+    if (eventType) {
+      const currentPriority = window.Utils.getEventTypePriority(playerData.eventType);
+      const newPriority = window.Utils.getEventTypePriority(eventType);
+      if (newPriority > currentPriority) {
+        playerData.eventType = eventType;
+      }
+    }
+  },
+
+  /**
    * Extract unique players with their clubs, video counts, and event type
    */
   extractPlayers(videos) {
@@ -38,51 +80,11 @@ const Data = {
     videos.forEach(video => {
       const eventType = window.Utils.getEventType(video.event);
 
-      // Process current player
-      if (video.currentPlayer) {
-        if (!playerMap.has(video.currentPlayer)) {
-          playerMap.set(video.currentPlayer, { count: 0, clubs: new Map(), eventType: null });
-        }
-        const playerData = playerMap.get(video.currentPlayer);
-        playerData.count++;
+      // Process current player(s) - supports doubles
+      this.processPlayer(video.currentPlayer, video.currentPlayerClub, eventType, playerMap);
 
-        if (video.currentPlayerClub) {
-          const clubCount = playerData.clubs.get(video.currentPlayerClub) || 0;
-          playerData.clubs.set(video.currentPlayerClub, clubCount + 1);
-        }
-
-        // Keep the highest priority event type
-        if (eventType) {
-          const currentPriority = window.Utils.getEventTypePriority(playerData.eventType);
-          const newPriority = window.Utils.getEventTypePriority(eventType);
-          if (newPriority > currentPriority) {
-            playerData.eventType = eventType;
-          }
-        }
-      }
-
-      // Process opponent player
-      if (video.opponentPlayer) {
-        if (!playerMap.has(video.opponentPlayer)) {
-          playerMap.set(video.opponentPlayer, { count: 0, clubs: new Map(), eventType: null });
-        }
-        const playerData = playerMap.get(video.opponentPlayer);
-        playerData.count++;
-
-        if (video.opponentClub) {
-          const clubCount = playerData.clubs.get(video.opponentClub) || 0;
-          playerData.clubs.set(video.opponentClub, clubCount + 1);
-        }
-
-        // Keep the highest priority event type
-        if (eventType) {
-          const currentPriority = window.Utils.getEventTypePriority(playerData.eventType);
-          const newPriority = window.Utils.getEventTypePriority(eventType);
-          if (newPriority > currentPriority) {
-            playerData.eventType = eventType;
-          }
-        }
-      }
+      // Process opponent player(s) - supports doubles
+      this.processPlayer(video.opponentPlayer, video.opponentClub, eventType, playerMap);
     });
 
     // Convert to array and find most common club for each player
