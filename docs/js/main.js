@@ -21,20 +21,11 @@ function toggleFilterGroup(groupId) {
 
 // Global function to add site to favorites
 function addToFavorites() {
-  const pageTitle = document.title;
-  const pageUrl = window.location.href;
-
-  // Try different methods based on browser
-  if (window.sidebar && window.sidebar.addPanel) {
-    // Firefox
-    window.sidebar.addPanel(pageTitle, pageUrl, '');
-  } else if (window.external && ('AddFavorite' in window.external)) {
-    // IE
-    window.external.AddFavorite(pageUrl, pageTitle);
-  } else {
-    // Modern browsers - show instruction
-    alert('להוספת האתר למועדפים:\n\nChrome/Edge: לחץ Ctrl+D (Windows) או Cmd+D (Mac)\nFirefox: לחץ Ctrl+D (Windows) או Cmd+D (Mac)\nSafari: לחץ Cmd+D\n\nאו השתמש בכפתור הכוכב בסרגל הכתובות');
-  }
+  // Show instruction
+  alert('להוספת האתר למועדפים:\n\nChrome/Edge: לחץ Ctrl+D (Windows) או Cmd+D (Mac)\nFirefox: לחץ Ctrl+D (Windows) או Cmd+D (Mac)\nSafari: לחץ Cmd+D\n\nאו השתמש בכפתור הכוכב בסרגל הכתובות');
+  
+  // Open tutorial video
+  window.open('https://www.youtube.com/shorts/ITKsDAMkhXE', '_blank');
 }
 
 /**

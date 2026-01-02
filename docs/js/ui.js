@@ -161,7 +161,6 @@ const UI = {
           </div>
           <div class="video-footer">
             <div class="event-tag" data-filter-type="events" data-filter-value="${window.Utils.escapeHtml(video.event)}">${isEventFiltered ? `<span class="filter-highlight">${window.Utils.escapeHtml(video.event)}</span>` : window.Utils.escapeHtml(video.event)}</div>
-            <a href="${window.Utils.escapeHtml(video.url)}" target="_blank" rel="noopener noreferrer" class="video-link" onclick="window.Storage.markAsWatched('${videoId}')">▶️ צפה בסרטון</a>
           </div>
         </div>
       </div>
