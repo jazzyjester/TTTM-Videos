@@ -25,11 +25,14 @@ const PlayerStats = {
       // Fetch all videos
       this.allVideos = await window.API.fetchAllVideos();
 
-      // Filter videos for this player
-      this.playerVideos = this.allVideos.filter(video =>
-        video.currentPlayer === this.playerName ||
-        video.opponentPlayer === this.playerName
-      );
+      // Filter videos for this player (including doubles games)
+      this.playerVideos = this.allVideos.filter(video => {
+        // Check if player name matches exactly (singles) or is part of a team (doubles)
+        const currentPlayers = video.currentPlayer ? video.currentPlayer.split(/[:\/]/).map(p => p.trim()) : [];
+        const opponentPlayers = video.opponentPlayer ? video.opponentPlayer.split(/[:\/]/).map(p => p.trim()) : [];
+
+        return currentPlayers.includes(this.playerName) || opponentPlayers.includes(this.playerName);
+      });
 
       if (this.playerVideos.length === 0) {
         this.showError(`לא נמצאו משחקים עבור ${this.playerName}`);
@@ -42,6 +45,14 @@ const PlayerStats = {
       console.error('Error loading player stats:', error);
       this.showError('שגיאה בטעינת הנתונים');
     }
+  },
+
+  /**
+   * Check if player is on the current player side (handles singles and doubles)
+   */
+  isPlayerOnCurrentSide(video) {
+    const currentPlayers = video.currentPlayer ? video.currentPlayer.split(/[:\/]/).map(p => p.trim()) : [];
+    return currentPlayers.includes(this.playerName);
   },
 
   /**
@@ -60,8 +71,8 @@ const PlayerStats = {
 
     const [score1, score2] = parts;
 
-    // Determine if player is current or opponent
-    const isCurrentPlayer = video.currentPlayer === this.playerName;
+    // Determine if player is current or opponent (handles doubles)
+    const isCurrentPlayer = this.isPlayerOnCurrentSide(video);
 
     // Player won if their score is higher
     if (isCurrentPlayer) {
@@ -72,10 +83,10 @@ const PlayerStats = {
   },
 
   /**
-   * Get opponent name for a video
+   * Get opponent name for a video (handles singles and doubles)
    */
   getOpponentName(video) {
-    return video.currentPlayer === this.playerName
+    return this.isPlayerOnCurrentSide(video)
       ? video.opponentPlayer
       : video.currentPlayer;
   },
@@ -164,13 +175,13 @@ const PlayerStats = {
   },
 
   /**
-   * Get most common club for player
+   * Get most common club for player (handles singles and doubles)
    */
   getMostCommonClub() {
     const clubCounts = {};
 
     this.playerVideos.forEach(video => {
-      const club = video.currentPlayer === this.playerName
+      const club = this.isPlayerOnCurrentSide(video)
         ? video.currentPlayerClub
         : video.opponentClub;
 
@@ -193,12 +204,21 @@ const PlayerStats = {
   },
 
   /**
-   * Get player ID and ranking
+   * Get player ID and ranking (only from singles games, not doubles)
    */
   getPlayerIdAndRanking() {
-    // Find the most recent video with player ID and ranking
+    // Check if a video is a doubles game
+    const isDoublesGame = (video) => {
+      return (video.currentPlayer && video.currentPlayer.match(/[:\/]/)) ||
+             (video.opponentPlayer && video.opponentPlayer.match(/[:\/]/));
+    };
+
+    // Find the most recent singles game with player ID and ranking
     const videoWithData = this.playerVideos.find(video => {
-      const isCurrentPlayer = video.currentPlayer === this.playerName;
+      // Skip doubles games for ranking
+      if (isDoublesGame(video)) return false;
+
+      const isCurrentPlayer = this.isPlayerOnCurrentSide(video);
       const playerId = isCurrentPlayer ? video.currentPlayerId : video.opponentPlayerId;
       const ranking = isCurrentPlayer ? video.currentPlayerRanking : video.opponentRanking;
       return playerId || ranking;
@@ -208,7 +228,7 @@ const PlayerStats = {
       return { playerId: null, ranking: null };
     }
 
-    const isCurrentPlayer = videoWithData.currentPlayer === this.playerName;
+    const isCurrentPlayer = this.isPlayerOnCurrentSide(videoWithData);
     return {
       playerId: isCurrentPlayer ? videoWithData.currentPlayerId : videoWithData.opponentPlayerId,
       ranking: isCurrentPlayer ? videoWithData.currentPlayerRanking : videoWithData.opponentRanking
@@ -291,6 +311,25 @@ const PlayerStats = {
   },
 
   /**
+   * Format opponent name(s) for display - handles doubles by splitting and making each name clickable
+   */
+  formatOpponentName(opponentName) {
+    // Check if it's a doubles team
+    if (opponentName.match(/[:\/]/)) {
+      const delimiter = opponentName.includes(':') ? ':' : '/';
+      const players = opponentName.split(delimiter).map(p => p.trim());
+
+      // Create clickable links for each player, separated by " / "
+      return players.map(player =>
+        `<span class="opponent-link" onclick="window.location.href='player-stats.html?player=${encodeURIComponent(player)}'">${window.Utils.escapeHtml(player)}</span>`
+      ).join(' / ');
+    } else {
+      // Singles - return clickable link
+      return `<span class="opponent-link" onclick="window.location.href='player-stats.html?player=${encodeURIComponent(opponentName)}'">${window.Utils.escapeHtml(opponentName)}</span>`;
+    }
+  },
+
+  /**
    * Render record against opponents
    */
   renderOpponentsRecord() {
@@ -313,7 +352,7 @@ const PlayerStats = {
 
       html += `
         <div class="performance-row">
-          <div class="performance-name opponent-link" onclick="window.location.href='player-stats.html?player=${encodeURIComponent(opponent.name)}'">${window.Utils.escapeHtml(opponent.name)}</div>
+          <div class="performance-name">${this.formatOpponentName(opponent.name)}</div>
           <div class="performance-stats">
             <div class="performance-count">${opponent.total} משחקים</div>
             <div class="performance-record">${opponent.wins}-${opponent.losses}</div>
@@ -361,8 +400,8 @@ const PlayerStats = {
       const resultText = result === 'win' ? 'ניצחון' : result === 'loss' ? 'הפסד' : 'לא ידוע';
       const scoreText = video.score || '?';
 
-      // Determine who is who in this match
-      const isCurrentPlayer = video.currentPlayer === this.playerName;
+      // Determine who is who in this match (handles doubles)
+      const isCurrentPlayer = this.isPlayerOnCurrentSide(video);
 
       // Get player info
       const playerName = this.playerName;
@@ -403,7 +442,7 @@ const PlayerStats = {
         <div class="recent-match">
           <div class="match-date-badge">${dateStr}</div>
           <div class="match-info">
-            <div class="match-opponent">מול: ${window.Utils.escapeHtml(opponent)}</div>
+            <div class="match-opponent">מול: ${this.formatOpponentName(opponent)}</div>
             <div class="match-event">${window.Utils.escapeHtml(video.event)}</div>
             ${playerDetails}
             ${opponentDetails}

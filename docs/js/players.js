@@ -41,54 +41,80 @@ const Players = {
   aggregatePlayers() {
     const playersMap = {};
 
-    this.allVideos.forEach(video => {
-      // Process current player
-      if (video.currentPlayer) {
-        if (!playersMap[video.currentPlayer]) {
-          playersMap[video.currentPlayer] = {
-            name: video.currentPlayer,
-            videoCount: 0,
-            videos: [],
-            clubs: {}
-          };
-        }
-        playersMap[video.currentPlayer].videoCount++;
-        playersMap[video.currentPlayer].videos.push({
-          date: new Date(video.updatedAt || video.createdAt || 0),
-          ranking: video.currentPlayerRanking,
-          club: video.currentPlayerClub,
-          video: video
-        });
-        // Track club occurrences
-        if (video.currentPlayerClub) {
-          playersMap[video.currentPlayer].clubs[video.currentPlayerClub] =
-            (playersMap[video.currentPlayer].clubs[video.currentPlayerClub] || 0) + 1;
-        }
-      }
+    // Helper function to process a player (handles both singles and doubles)
+    const processPlayer = (playerName, ranking, club, video) => {
+      if (!playerName) return;
 
-      // Process opponent player
-      if (video.opponentPlayer) {
-        if (!playersMap[video.opponentPlayer]) {
-          playersMap[video.opponentPlayer] = {
-            name: video.opponentPlayer,
+      // Check if this is a doubles game (player name contains ":" or "/")
+      const isDoubles = playerName.includes(':') || playerName.includes('/');
+
+      if (isDoubles) {
+        // Split the player names and process each separately
+        // Use ":" as primary delimiter, fallback to "/"
+        const delimiter = playerName.includes(':') ? ':' : '/';
+        const players = playerName.split(delimiter).map(p => p.trim());
+
+        players.forEach(individualPlayer => {
+          if (!individualPlayer) return;
+
+          if (!playersMap[individualPlayer]) {
+            playersMap[individualPlayer] = {
+              name: individualPlayer,
+              videoCount: 0,
+              videos: [],
+              clubs: {}
+            };
+          }
+
+          playersMap[individualPlayer].videoCount++;
+          playersMap[individualPlayer].videos.push({
+            date: new Date(video.updatedAt || video.createdAt || 0),
+            ranking: null, // Ignore ranking for doubles
+            club: club,
+            video: video,
+            isDoubles: true
+          });
+
+          // Track club occurrences
+          if (club) {
+            playersMap[individualPlayer].clubs[club] =
+              (playersMap[individualPlayer].clubs[club] || 0) + 1;
+          }
+        });
+      } else {
+        // Singles game - process as normal
+        if (!playersMap[playerName]) {
+          playersMap[playerName] = {
+            name: playerName,
             videoCount: 0,
             videos: [],
             clubs: {}
           };
         }
-        playersMap[video.opponentPlayer].videoCount++;
-        playersMap[video.opponentPlayer].videos.push({
+
+        playersMap[playerName].videoCount++;
+        playersMap[playerName].videos.push({
           date: new Date(video.updatedAt || video.createdAt || 0),
-          ranking: video.opponentRanking,
-          club: video.opponentClub,
-          video: video
+          ranking: ranking,
+          club: club,
+          video: video,
+          isDoubles: false
         });
+
         // Track club occurrences
-        if (video.opponentClub) {
-          playersMap[video.opponentPlayer].clubs[video.opponentClub] =
-            (playersMap[video.opponentPlayer].clubs[video.opponentClub] || 0) + 1;
+        if (club) {
+          playersMap[playerName].clubs[club] =
+            (playersMap[playerName].clubs[club] || 0) + 1;
         }
       }
+    };
+
+    this.allVideos.forEach(video => {
+      // Process current player (or players in doubles)
+      processPlayer(video.currentPlayer, video.currentPlayerRanking, video.currentPlayerClub, video);
+
+      // Process opponent player (or players in doubles)
+      processPlayer(video.opponentPlayer, video.opponentRanking, video.opponentClub, video);
     });
 
     // Convert to array and find most recent ranking for each player
@@ -96,10 +122,10 @@ const Players = {
       // Sort videos by date (most recent first)
       player.videos.sort((a, b) => b.date - a.date);
 
-      // Get most recent ranking
-      const mostRecentVideo = player.videos[0];
-      player.mostRecentRanking = mostRecentVideo.ranking;
-      player.mostRecentDate = mostRecentVideo.date;
+      // Get most recent ranking from singles games only (ignore doubles)
+      const mostRecentSinglesVideo = player.videos.find(v => !v.isDoubles && v.ranking != null && v.ranking !== '');
+      player.mostRecentRanking = mostRecentSinglesVideo ? mostRecentSinglesVideo.ranking : null;
+      player.mostRecentDate = player.videos[0].date;
 
       // Get most common club
       let mostCommonClub = '';
