@@ -1,4 +1,5 @@
 <!-- Header Component -->
+<div class="mobile-menu-backdrop" id="mobileMenuBackdrop" onclick="toggleMobileMenu()"></div>
 <div class="header">
   <div id="envBadge" class="env-badge">
     <span class="env-badge-icon">🔧</span>
@@ -14,27 +15,30 @@
       </div>
     </div>
   </div>
+  <button class="mobile-menu-toggle" onclick="toggleMobileMenu()" aria-label="תפריט">
+    <i class="fa-solid fa-bars"></i>
+  </button>
   <div class="header-content">
     <h1 id="header-title">טנ"ש ישראלי - סרטונים</h1>
     <p class="subtitle" id="header-subtitle">כל הסרטונים שהועלו, ממוינים לפי אירוע ותאריך</p>
-    <div class="header-links">
-      <a href="index.html" class="header-link">
+    <div class="header-links" id="headerLinks">
+      <a href="index.html" class="header-link" onclick="closeMobileMenu()">
         <span class="header-link-icon"><i class="fa-solid fa-home"></i></span>
         <span>ראשי</span>
       </a>
-      <a href="players.html" class="header-link">
+      <a href="players.html" class="header-link" onclick="closeMobileMenu()">
         <span class="header-link-icon"><i class="fa-solid fa-users"></i></span>
         <span>שחקנים</span>
       </a>
-      <a href="https://www.youtube.com/@TableTennisIsrael" target="_blank" rel="noopener noreferrer" class="header-link">
+      <a href="https://www.youtube.com/@TableTennisIsrael" target="_blank" rel="noopener noreferrer" class="header-link" onclick="closeMobileMenu()">
         <span class="header-link-icon"><i class="fa-brands fa-square-youtube"></i></span>
         <span>ערוץ היוטיוב שלנו</span>
       </a>
-      <a href="https://www.tttm.co.il" target="_blank" rel="noopener noreferrer" class="header-link">
+      <a href="https://www.tttm.co.il" target="_blank" rel="noopener noreferrer" class="header-link" onclick="closeMobileMenu()">
         <span class="header-link-icon">🏓</span>
         <span>אתר TTTM</span>
       </a>
-      <a href="#" onclick="addToFavorites(); return false;" class="header-link" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; font-weight: bold;">
+      <a href="#" onclick="addToFavorites(); closeMobileMenu(); return false;" class="header-link" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; font-weight: bold;">
         <span class="header-link-icon">⭐</span>
         <span>הסבר הוספה למועדפים</span>
       </a>

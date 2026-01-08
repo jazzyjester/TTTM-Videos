@@ -188,6 +188,64 @@ function closeFavoritesModal() {
   }
 }
 
+/**
+ * Toggles the mobile menu open/closed
+ */
+function toggleMobileMenu() {
+  const headerLinks = document.getElementById('headerLinks');
+  const menuToggle = document.querySelector('.mobile-menu-toggle');
+  const backdrop = document.getElementById('mobileMenuBackdrop');
+  
+  if (headerLinks) {
+    const isActive = headerLinks.classList.toggle('active');
+    
+    // Toggle backdrop
+    if (backdrop) {
+      backdrop.classList.toggle('active', isActive);
+    }
+    
+    // Toggle body scroll
+    document.body.classList.toggle('mobile-menu-open', isActive);
+    
+    // Update icon
+    if (menuToggle) {
+      const icon = menuToggle.querySelector('i');
+      if (icon) {
+        icon.className = isActive ? 'fa-solid fa-times' : 'fa-solid fa-bars';
+      }
+    }
+  }
+}
+
+/**
+ * Closes the mobile menu when clicking a link
+ */
+function closeMobileMenu() {
+  const headerLinks = document.getElementById('headerLinks');
+  const menuToggle = document.querySelector('.mobile-menu-toggle');
+  const backdrop = document.getElementById('mobileMenuBackdrop');
+  
+  if (headerLinks && headerLinks.classList.contains('active')) {
+    headerLinks.classList.remove('active');
+    
+    // Hide backdrop
+    if (backdrop) {
+      backdrop.classList.remove('active');
+    }
+    
+    // Re-enable body scroll
+    document.body.classList.remove('mobile-menu-open');
+    
+    // Reset icon
+    if (menuToggle) {
+      const icon = menuToggle.querySelector('i');
+      if (icon) {
+        icon.className = 'fa-solid fa-bars';
+      }
+    }
+  }
+}
+
 // Load the header when the DOM is ready
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', loadHeader);
@@ -201,3 +259,5 @@ window.addToFavorites = addToFavorites;
 window.closeFavoritesModal = closeFavoritesModal;
 window.switchToLocal = switchToLocal;
 window.switchToFirebase = switchToFirebase;
+window.toggleMobileMenu = toggleMobileMenu;
+window.closeMobileMenu = closeMobileMenu;
