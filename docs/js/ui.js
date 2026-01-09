@@ -229,6 +229,9 @@ const UI = {
       'ליגה לאומית': [],
       'ליגה ארצית': [],
       'ליגה א': [],
+      'ליגת נוער': [],
+      'ליגת קדטים': [],
+      'ליגת מיני קדטים': [],
       'other': []
     };
 
@@ -241,7 +244,7 @@ const UI = {
     });
 
     let html = '';
-    const eventTypes = ['ליגת על', 'ליגה לאומית', 'ליגה ארצית', 'ליגה א', 'other'];
+    const eventTypes = ['ליגת על', 'ליגה לאומית', 'ליגה ארצית', 'ליגה א', 'ליגת נוער', 'ליגת קדטים', 'ליגת מיני קדטים', 'other'];
 
     eventTypes.forEach(eventType => {
       if (grouped[eventType].length > 0) {
@@ -309,6 +312,9 @@ const UI = {
       'ליגה לאומית': [],
       'ליגה ארצית': [],
       'ליגה א': [],
+      'ליגת נוער': [],
+      'ליגת קדטים': [],
+      'ליגת מיני קדטים': [],
       'other': []
     };
 
@@ -323,7 +329,7 @@ const UI = {
     let html = '';
 
     // Render each group with collapsible header
-    const eventTypes = ['ליגת על', 'ליגה לאומית', 'ליגה ארצית', 'ליגה א', 'other'];
+    const eventTypes = ['ליגת על', 'ליגה לאומית', 'ליגה ארצית', 'ליגה א', 'ליגת נוער', 'ליגת קדטים', 'ליגת מיני קדטים', 'other'];
     eventTypes.forEach(eventType => {
       if (grouped[eventType].length > 0) {
         // Add collapsible header

@@ -71,7 +71,7 @@ const Utils = {
 
   /**
    * Determine event type from event name
-   * Returns: 'ליגת על', 'לאומית', 'ליגה ארצית', or null
+   * Returns: string or null
    */
   getEventType(eventName) {
     if (!eventName) return null;
@@ -79,7 +79,10 @@ const Utils = {
     if (eventName.includes('על')) return 'ליגת על';
     if (eventName.includes('לאומית')) return 'ליגה לאומית';
     if (eventName.includes('ארצית')) return 'ליגה ארצית';
-    if (eventName.includes('ליגה א')) return 'ליגה א';
+    if (eventName.includes('ליגת א')) return 'ליגה א';
+    if (eventName.includes('נוער')) return 'ליגת נוער';
+    if (eventName.includes('קדטים')) return 'ליגת קדטים';
+    if (eventName.includes('מיני קדטים')) return 'ליגת מיני קדטים';
 
     return null;
   },
@@ -89,10 +92,13 @@ const Utils = {
    */
   getEventTypePriority(eventType) {
     const priorities = {
-      'ליגת על': 4,
-      'ליגה לאומית': 3,
-      'ליגה ארצית': 2,
-      'ליגה א': 1
+      'ליגת על': 7,
+      'ליגה לאומית': 6,
+      'ליגה ארצית': 5,
+      'ליגה א': 4,
+      'ליגת נוער': 3,
+      'ליגת קדטים': 2,
+      'ליגת מיני קדטים': 1
     };
     return priorities[eventType] || 0;
   },
@@ -115,11 +121,12 @@ const Utils = {
       return { label: 'היום', className: 'video-date-badge-today' };
     } else if (videoDate >= yesterday && videoDate < today) {
       return { label: 'אתמול', className: 'video-date-badge-yesterday' };
-    } else if (videoDate >= weekAgo) {
-      return { label: 'שבוע', className: 'video-date-badge-week' };
-    } else if (videoDate >= monthAgo) {
-      return { label: 'חודש', className: 'video-date-badge-month' };
-    }
+    } 
+    // else if (videoDate >= weekAgo) {
+    //   return { label: 'שבוע', className: 'video-date-badge-week' };
+    // } else if (videoDate >= monthAgo) {
+    //   return { label: 'חודש', className: 'video-date-badge-month' };
+    // }
     // If no filter matches, show the actual date
     const formattedDate = videoDate.toLocaleDateString('he-IL', {
       day: '2-digit',
