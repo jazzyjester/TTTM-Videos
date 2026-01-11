@@ -1806,3 +1806,63 @@ kbd {
   width: 16px;
   text-align: center;
 }
+
+/* Visitor Counter Footer */
+.visitor-footer {
+  background: #2c3e50;
+  color: #ecf0f1;
+  padding: 20px 0;
+  text-align: center;
+  border-top: 3px solid #0066cc;
+  margin-top: 40px;
+}
+
+.visitor-stats {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 14px;
+  color: #bdc3c7;
+}
+
+.stat-item i {
+  font-size: 18px;
+  color: #3498db;
+}
+
+.stat-item strong {
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  min-width: 50px;
+  text-align: left;
+}
+
+@media (max-width: 768px) {
+  .visitor-stats {
+    gap: 20px;
+  }
+  
+  .stat-item {
+    font-size: 13px;
+  }
+  
+  .stat-item i {
+    font-size: 16px;
+  }
+  
+  .stat-item strong {
+    font-size: 15px;
+  }
+}
