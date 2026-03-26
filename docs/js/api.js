@@ -87,51 +87,65 @@ const API = {
   },
 
   /**
-   * Fetch videos from Firebase Firestore
+   * Parse a Firestore document into a video object
+   */
+  parseFirestoreDoc(doc) {
+    const fields = doc.fields;
+    return {
+      id: doc.name.split('/').pop(),
+      match: fields.match?.stringValue || '',
+      url: fields.url?.stringValue || '',
+      currentPlayer: fields.currentPlayer?.stringValue || '',
+      currentPlayerClub: fields.currentPlayerClub?.stringValue || '',
+      currentPlayerId: fields.currentPlayerId?.stringValue || '',
+      currentPlayerRanking: fields.currentPlayerRanking?.stringValue || '',
+      opponentPlayer: fields.opponentPlayer?.stringValue || '',
+      opponentClub: fields.opponentClub?.stringValue || '',
+      opponentPlayerId: fields.opponentPlayerId?.stringValue || '',
+      opponentRanking: fields.opponentRanking?.stringValue || '',
+      score: fields.score?.stringValue || '',
+      event: fields.event?.stringValue || 'ללא אירוע',
+      createdAt: fields.createdAt?.timestampValue || '',
+      updatedAt: fields.updatedAt?.timestampValue || ''
+    };
+  },
+
+  /**
+   * Fetch videos from Firebase Firestore (handles pagination)
    */
   async fetchVideosFromFirebase() {
     try {
-      const url = `https://firestore.googleapis.com/v1/projects/${window.APP_CONFIG.FIREBASE_CONFIG.projectId}/databases/(default)/documents/videos`;
-
-      const response = await fetch(url, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-
-      if (!response.ok) {
-        console.error('Failed to fetch videos from Firebase');
-        return null;
-      }
-
-      const data = await response.json();
+      const baseUrl = `https://firestore.googleapis.com/v1/projects/${window.APP_CONFIG.FIREBASE_CONFIG.projectId}/databases/(default)/documents/videos`;
       const videos = [];
+      let pageToken = null;
 
-      if (data.documents) {
-        data.documents.forEach(doc => {
-          const fields = doc.fields;
-          const video = {
-            id: doc.name.split('/').pop(),
-            match: fields.match?.stringValue || '',
-            url: fields.url?.stringValue || '',
-            currentPlayer: fields.currentPlayer?.stringValue || '',
-            currentPlayerClub: fields.currentPlayerClub?.stringValue || '',
-            currentPlayerId: fields.currentPlayerId?.stringValue || '',
-            currentPlayerRanking: fields.currentPlayerRanking?.stringValue || '',
-            opponentPlayer: fields.opponentPlayer?.stringValue || '',
-            opponentClub: fields.opponentClub?.stringValue || '',
-            opponentPlayerId: fields.opponentPlayerId?.stringValue || '',
-            opponentRanking: fields.opponentRanking?.stringValue || '',
-            score: fields.score?.stringValue || '',
-            event: fields.event?.stringValue || 'ללא אירוע',
-            createdAt: fields.createdAt?.timestampValue || '',
-            updatedAt: fields.updatedAt?.timestampValue || ''
-          };
-          videos.push(video);
+      do {
+        const url = pageToken ? `${baseUrl}?pageToken=${pageToken}` : baseUrl;
+
+        const response = await fetch(url, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
         });
-      }
 
-      console.log('Loaded', videos.length, 'videos from Firebase');
+        if (!response.ok) {
+          console.error('Failed to fetch videos from Firebase');
+          return videos.length > 0 ? videos : null;
+        }
+
+        const data = await response.json();
+
+        if (data.documents) {
+          data.documents.forEach(doc => {
+            videos.push(this.parseFirestoreDoc(doc));
+          });
+        }
+
+        pageToken = data.nextPageToken || null;
+        console.log(`Loaded ${videos.length} videos from Firebase so far...`);
+      } while (pageToken);
+
+      console.log('Total videos loaded from Firebase:', videos.length);
       return videos;
     } catch (error) {
       console.error('Error fetching videos from Firebase:', error);
