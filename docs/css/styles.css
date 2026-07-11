@@ -1810,6 +1810,17 @@ kbd {
   line-height: 1.4;
 }
 
+.upcoming-video-day-label {
+  display: inline-block;
+  align-self: flex-start;
+  font-size: 12px;
+  font-weight: bold;
+  color: #e65100;
+  background: #ffe0b2;
+  padding: 3px 10px;
+  border-radius: 10px;
+}
+
 
 @media (max-width: 768px) {
   .upcoming-video-card {

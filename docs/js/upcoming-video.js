@@ -12,6 +12,9 @@
 
   var PLAYLIST_ID = 'UUMOch5FlPyO-E9fcYu3DIXoew';
 
+  // Members-only videos that never get released publicly — never show these as "upcoming".
+  var EXCLUDED_VIDEO_IDS = ['8HtlB6eXDWo', '1hGyl7A-H84'];
+
   var section = document.getElementById('upcomingSection');
   if (!section) return;
 
@@ -24,7 +27,7 @@
       .replace(/"/g, '&quot;');
   }
 
-  async function renderUpcomingVideo(videoId) {
+  async function fetchVideoMeta(videoId) {
     var title = '';
     var thumbnail = 'https://img.youtube.com/vi/' + videoId + '/hqdefault.jpg';
     try {
@@ -39,27 +42,41 @@
         thumbnail = data.thumbnail_url || thumbnail;
       }
     } catch (_) {}
+    return { videoId: videoId, title: title, thumbnail: thumbnail };
+  }
 
+  var DAY_LABELS = ['מחר', 'מחרתיים'];
+
+  async function renderUpcomingVideos(videoIds) {
+    var videos = await Promise.all(videoIds.map(fetchVideoMeta));
+
+    var cardsHtml = videos
+      .map(function (video, index) {
+        var dayLabel = DAY_LABELS[index];
+        return (
+          '<div class="upcoming-video-card">' +
+            '<div class="upcoming-thumbnail-link">' +
+              '<img src="' + video.thumbnail + '" alt="' + escapeHtml(video.title) + '" class="upcoming-thumbnail-img" onerror="this.src=\'https://img.youtube.com/vi/' + video.videoId + '/hqdefault.jpg\'">' +
+            '</div>' +
+            '<div class="upcoming-video-info">' +
+              (dayLabel ? '<div class="upcoming-video-day-label">' + dayLabel + '</div>' : '') +
+              (video.title ? '<div class="upcoming-video-title">' + escapeHtml(video.title) + '</div>' : '') +
+            '</div>' +
+          '</div>'
+        );
+      })
+      .join('');
 
     section.innerHTML =
       '<div class="event-group" id="event-upcoming-video">' +
         '<div class="event-header upcoming-video-event-header" onclick="toggleEventGroup(\'upcoming-video\')">' +
           '<div class="event-header-left">' +
             '<span class="event-collapse-icon">▼</span>' +
-            '<div class="event-name upcoming-video-event-name">הסרטון הבא שיפורסם</div>' +
+            '<div class="event-name upcoming-video-event-name">הסרטונים הבאים שיפורסמו</div>' +
           '</div>' +
           '<div class="upcoming-video-new-badge">חדש</div>' +
         '</div>' +
-        '<div class="video-list">' +
-          '<div class="upcoming-video-card">' +
-            '<div class="upcoming-thumbnail-link">' +
-              '<img src="' + thumbnail + '" alt="' + escapeHtml(title) + '" class="upcoming-thumbnail-img" onerror="this.src=\'https://img.youtube.com/vi/' + videoId + '/hqdefault.jpg\'">' +
-            '</div>' +
-            '<div class="upcoming-video-info">' +
-              (title ? '<div class="upcoming-video-title">' + escapeHtml(title) + '</div>' : '') +
-            '</div>' +
-          '</div>' +
-        '</div>' +
+        '<div class="video-list">' + cardsHtml + '</div>' +
       '</div>';
 
     section.style.display = 'block';
@@ -88,7 +105,15 @@
           var allVideoIds = player.getPlaylist();
           container.remove();
           if (!allVideoIds || allVideoIds.length === 0) return;
-          renderUpcomingVideo(allVideoIds[allVideoIds.length - 1]); // last = oldest (next to be released)
+
+          var releaseOrderIds = allVideoIds.filter(function (id) {
+            return EXCLUDED_VIDEO_IDS.indexOf(id) === -1;
+          });
+          if (releaseOrderIds.length === 0) return;
+
+          // Playlist order is newest-first, so the end of the array is oldest = next to be released.
+          var upcomingIds = releaseOrderIds.slice(-2).reverse();
+          renderUpcomingVideos(upcomingIds);
         },
         onError: function () {
           container.remove();
