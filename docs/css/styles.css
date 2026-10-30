@@ -1914,3 +1914,188 @@ kbd {
   font-size: 15px;
   box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
 }
+
+/* Modern sports-library theme. Presentation only: existing handlers, IDs,
+   data sources, score privacy and watched-video storage are unchanged. */
+:root {
+  --tt-ink: #14243c;
+  --tt-muted: #5d6d82;
+  --tt-blue: #1262c4;
+  --tt-line: #e1e8f1;
+  --tt-soft: #f2f6fb;
+  --tt-radius: 18px;
+}
+body { color: var(--tt-ink); background: #f2f5fa; line-height: 1.55; }
+button, input { font-family: inherit; }
+a, button, input { -webkit-tap-highlight-color: transparent; }
+a:focus-visible, button:focus-visible, input:focus-visible,
+[tabindex]:focus-visible { outline: 3px solid #2998e8; outline-offset: 4px; }
+.header {
+  background: radial-gradient(ellipse at 8% 0%, #174777 0%, transparent 55%), #101f35;
+  border: 0; padding: 38px 0 0; box-shadow: none; color: white;
+}
+.header-content { max-width: 1440px; padding: 0 32px; text-align: right; }
+.header h1 { color: white; font-size: clamp(26px, 3vw, 40px); letter-spacing: -.8px; margin-bottom: 6px; }
+.header h1::before { content: 'TTTM / VIDEO'; display: block; font-size: 12px; letter-spacing: 3px; color: #70caff; margin-bottom: 12px; direction: ltr; text-align: right; }
+.header .subtitle { color: #c1cfe0; font-size: 15px; margin-bottom: 26px; }
+.header-links { justify-content: flex-start; gap: 8px; margin: 0; padding: 0 0 18px; flex-wrap: wrap; }
+.header .header-link { background: #ffffff0a; color: #dbe8f7; border: 1px solid #ffffff1f; padding: 10px 17px; border-radius: 10px; font-size: 14px; font-weight: 600; min-height: 44px; }
+.header .header-link:hover { background: #ffffff1c; color: white; transform: none; }
+.header .header-link[style] { background: #ffffff0a !important; color: #dbe8f7 !important; }
+body:has(#videosContent) .header-link[href='index.html'],
+body:has(#playersContent) .header-link[href='players.html'],
+body:has(#statsContent) .header-link[href='players.html'] { background: #e6f4ff; color: #1459a5; border-color: #e6f4ff; }
+.header-link-icon { font-size: 16px; }
+.main-container { max-width: 1440px; grid-template-columns: 280px minmax(0, 1fr); gap: 26px; padding: 0 32px; margin: 30px auto; align-items: start; }
+body .main-content { max-width: 1376px; padding: 30px 32px; }
+.content-area { gap: 24px; min-width: 0; }
+.sidebar, .videos-section, .statistics-section, .filter-section,
+.upcoming-section, body .section-box, body .players-list,
+body .search-container, body .stat-box, body .player-header {
+  background: white; border: 1px solid var(--tt-line); border-radius: var(--tt-radius);
+  box-shadow: 0 4px 20px #152c4e04;
+}
+.sidebar { top: 24px; max-height: calc(100vh - 48px); padding: 20px; }
+.sidebar::before { content: 'מוצאים את המשחק שלכם'; display: block; font-size: 17px; font-weight: 700; padding-bottom: 12px; color: var(--tt-ink); }
+.sidebar-title { border-bottom: 1px solid var(--tt-line); color: var(--tt-ink); font-size: 14px; padding-bottom: 12px; margin-top: 16px !important; margin-bottom: 12px; min-height: 44px; }
+.collapse-btn { color: var(--tt-muted); min-width: 36px; min-height: 36px; }
+.list-item, .date-filter-item { border-radius: 8px; padding: 10px; background: var(--tt-soft); min-height: 44px; }
+.list-item.active, .date-filter-item.active { background: var(--tt-blue); }
+.filter-group-header { background: var(--tt-soft); border-radius: 8px; min-height: 40px; }
+.search-input, body .search-input { border: 1px solid #ced9e7; border-radius: 10px; padding: 13px 16px; font-size: 16px; background: #f9fbfe; min-height: 48px; }
+.search-input:focus, body .search-input:focus { border-color: var(--tt-blue); box-shadow: 0 0 0 3px #1262c414; }
+.videos-section, .statistics-section, .upcoming-section { padding: 24px; }
+.section-title, body .section-box-title { border-bottom: 1px solid var(--tt-line); color: var(--tt-ink); font-size: 22px; padding-bottom: 16px; margin-bottom: 20px; }
+.event-group { margin-bottom: 18px; }
+.event-header { border: 1px solid var(--tt-line); background: #f8fafd; border-radius: 10px; padding: 13px 16px; min-height: 52px; gap: 12px; }
+.event-header-left { min-width: 0; gap: 9px; }
+.event-name { font-size: 16px; color: var(--tt-ink); white-space: normal; line-height: 1.4; }
+.event-count { font-size: 12px; color: var(--tt-muted); flex-shrink: 0; border: 1px solid var(--tt-line); }
+#event-משחקים-אחרונים .event-header { background: #eaf3ff; border-color: #d6e7fc; }
+#event-משחקים-אחרונים .event-header:hover { background: #dfedff; }
+.video-list { gap: 14px; }
+.video-card { background: white; border: 1px solid var(--tt-line); border-radius: 13px; padding: 14px; gap: 18px; grid-template-columns: 168px minmax(0, 1fr); align-items: center; }
+.video-card:hover { border-color: #a9c4e7; box-shadow: 0 4px 16px #10284909; }
+.video-thumbnail-container { width: 100%; }
+.video-thumbnail { width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 9px; display: block; }
+.video-card-content { min-width: 0; gap: 10px; }
+.match-details { grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 12px; }
+.player-info { min-width: 0; }
+.player-name-clickable { font-size: 15px; color: #1459a5; line-height: 1.5; }
+.club-name { font-size: 12px; color: var(--tt-muted); }
+.vs-divider { font-size: 13px; color: #64758c; }
+.video-footer { margin-top: 2px; padding-top: 10px; border-top: 1px solid #edf1f7; }
+.event-tag { background: #edf4fc; color: #315d94; border-radius: 6px; padding: 4px 9px; font-size: 11px; white-space: normal; }
+.video-date-text, .video-date-badge { font-size: 10px; border-radius: 5px; top: 8px; left: 8px; }
+.filter-tag { border-radius: 8px; background: var(--tt-blue); }
+.clear-filters-btn { background: #f8e9ec; color: #a42b46; border-radius: 8px; min-height: 44px; }
+.clear-filters-btn:hover { background: #f4dce2; }
+.stats-grid { gap: 14px; }
+.stat-card { background: var(--tt-soft); border-radius: 12px; border: 0; padding: 24px 12px; }
+.stat-number { color: var(--tt-blue); font-size: 34px; font-variant-numeric: tabular-nums; }
+.stat-label { color: var(--tt-muted); }
+body .stats-summary, body .stats-overview { gap: 18px; margin-bottom: 24px; }
+body .stat-box { padding: 24px; text-align: right; border-top: 3px solid #9ec7f4; }
+body .stat-box-number { font-size: 38px; color: var(--tt-blue); font-variant-numeric: tabular-nums; line-height: 1.2; }
+body .stat-box-label { color: var(--tt-muted); font-size: 13px; margin-top: 8px; }
+body .stat-box.win-rate { background: #e8f5ef; border-color: #b9e2cc; }
+body .stat-box.win-rate .stat-box-number { color: #20734e; }
+body .stat-box.win-rate .stat-box-label { color: #365e4b; }
+body .search-container { padding: 20px; margin-bottom: 20px; }
+body .search-container .search-input { margin-bottom: 0; }
+body .players-list { padding: 14px; }
+body .player-row { border: 1px solid transparent; background: white; border-radius: 10px; padding: 16px; margin-bottom: 4px; grid-template-columns: 48px minmax(0, 1fr) auto auto; }
+body .player-row:nth-child(even) { background: #f5f8fc; }
+body .player-row:hover { background: #edf4fe; border-color: #d4e4f8; transform: none; }
+body .player-rank { background: #eaf1fb; color: #42648e; border-radius: 8px; padding: 7px; font-size: 15px; }
+body .player-name { color: var(--tt-ink); }
+body .player-ranking { background: #e9f3ff; color: #1a5ca9; border-radius: 8px; }
+body .player-videos { background: transparent; color: var(--tt-muted); }
+body .player-header { text-align: right; padding: 28px; margin-bottom: 24px; }
+body .player-name-title { color: var(--tt-ink); font-size: 34px; }
+body .player-club-title, body .player-subtitle { color: var(--tt-muted); }
+body .back-button { color: #285d9b; background: #e7eef8; border-radius: 9px; min-height: 44px; }
+body .back-button:hover { background: #dce8f8; transform: none; }
+body .performance-row { background: var(--tt-soft); border-radius: 10px; padding: 14px; }
+body .performance-name { color: var(--tt-ink); }
+body .performance-record { color: #1a5ca9; }
+body .win-bar-fill { background: #2b9568; }
+body .recent-match { background: #f5f8fc; border-radius: 12px; }
+body .match-thumbnail { border-radius: 8px; }
+body .match-result { border-radius: 8px; }
+body .match-result.win { background: #e0f3e9; color: #1c6844; }
+body .match-result.loss { background: #fbe7eb; color: #a3314a; }
+.upcoming-section { border-color: #dbe6f5; }
+#event-upcoming-video .event-header { background: #edf4fd; border-color: #d9e6f8; }
+.upcoming-video-event-name { color: #285d9b !important; }
+.upcoming-video-new-badge { background: #1d6bc6; border-radius: 6px; font-size: 11px; }
+.upcoming-video-card { border: 1px solid var(--tt-line); border-radius: 12px; background: #f8fafd; padding: 14px; gap: 18px; }
+.upcoming-thumbnail-link { border-radius: 8px; }
+.upcoming-video-title { color: var(--tt-ink); font-size: 16px; }
+.upcoming-video-day-label { color: #315d94; background: #e2edfb; border-radius: 5px; }
+.about-section { max-width: 1376px; margin: 32px auto; background: transparent; border: 0; border-top: 1px solid #dce4ef; border-radius: 0; padding: 32px; box-shadow: none; }
+.about-title { color: var(--tt-ink); font-size: 22px; border: 0; }
+.about-content { color: var(--tt-muted); line-height: 1.9; max-width: 850px; margin: 0; }
+.site-footer { background: #101f35; color: #d2deed; border: 0; font-size: 14px; padding: 24px; box-shadow: none; margin-top: 30px; }
+.modal-content { border-radius: 20px; }
+.modal-header { background: #edf4fe; }
+.modal-header h2 { color: var(--tt-ink); }
+.modal-btn-primary { background: var(--tt-blue); border-radius: 8px; }
+.player-context-menu { border-radius: 12px; border-color: var(--tt-line); }
+@media (min-width: 769px) and (max-width: 1200px) {
+  .main-container { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: 20px; }
+  .sidebar { position: sticky; }
+  .video-card { grid-template-columns: 130px minmax(0, 1fr); gap: 12px; }
+  .content-area, .sidebar { order: initial !important; }
+}
+@media (max-width: 768px) {
+  .header { padding: 26px 0 20px; }
+  .header-content { padding: 0 20px; }
+  .header h1 { padding-right: 52px; font-size: 24px; line-height: 1.4; }
+  .header h1::before { font-size: 10px; letter-spacing: 2px; margin-bottom: 7px; }
+  .header .subtitle { font-size: 13px; margin: 12px 0 0; max-width: 300px; }
+  .header .mobile-menu-toggle { top: 44px; right: 18px; width: 42px; height: 42px; background: #ffffff12; border: 1px solid #ffffff35; border-radius: 10px; box-shadow: none; }
+  .header-links { background: #101f35; flex-wrap: nowrap; padding: 70px 16px 24px; gap: 8px; max-width: 320px; width: 88vw; }
+  .header .header-link, .header .header-link[style] { width: 100%; margin: 0; padding: 14px 16px; border-radius: 10px; min-height: 50px; }
+  .header-link::before { display: none; }
+  .header-link .header-link-icon { color: inherit !important; }
+  .main-container { display: flex; margin: 18px auto; padding: 0 14px; gap: 18px; }
+  .content-area { order: 1; gap: 18px; width: 100%; }
+  .sidebar { order: 2; width: 100%; max-height: none; padding: 18px; }
+  .videos-section, .statistics-section, .upcoming-section { padding: 16px; border-radius: 14px; }
+  .section-title { font-size: 20px; margin-bottom: 16px; }
+  .video-card { grid-template-columns: 1fr; padding: 12px; gap: 16px; }
+  .video-thumbnail { height: auto; aspect-ratio: 16 / 9; }
+  .video-thumbnail-container { display: block; }
+  .match-details { gap: 7px; }
+  .player-name-clickable { font-size: 14px; }
+  .event-header { position: relative; padding: 12px; gap: 8px; box-shadow: none; }
+  .event-name { font-size: 14px; white-space: normal; overflow: visible; }
+  .event-count { font-size: 11px; padding: 3px 7px; }
+  .event-tag { font-size: 11px; white-space: normal; overflow: visible; }
+  .upcoming-video-card { grid-template-columns: 1fr; gap: 12px; }
+  .upcoming-thumbnail-img { width: 100%; height: auto; aspect-ratio: 16 / 9; }
+  .upcoming-video-title { font-size: 14px; }
+  body .main-content { padding: 18px 14px; }
+  body .stats-summary { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-bottom: 18px; }
+  body .stats-overview { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  body .stat-box { padding: 16px 10px; border-radius: 12px; }
+  body .stat-box-number { font-size: 28px; }
+  body .stat-box-label { font-size: 12px; overflow-wrap: anywhere; }
+  body .player-row { grid-template-columns: 34px minmax(0, 1fr); gap: 8px 12px; padding: 12px 8px; }
+  body .player-row .player-rank { grid-row: span 2; margin: 0; text-align: center; }
+  body .player-row .player-name { font-size: 15px; }
+  body .player-row .player-videos, body .player-row .player-ranking { grid-column: 2; justify-self: start; padding: 3px 8px; font-size: 12px; }
+  body .players-list { padding: 8px; }
+  body .search-container { padding: 14px; }
+  body .player-header { padding: 22px; }
+  body .player-name-title { font-size: 28px; }
+  body .section-box { padding: 16px; border-radius: 14px; }
+  body .section-box-title { font-size: 18px; }
+  body .performance-stats { flex-wrap: wrap; gap: 8px; }
+  .about-section { padding: 28px 20px; margin: 24px 14px; }
+  .env-badge { top: 3px; left: 3px; max-width: 180px; padding: 3px 6px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
+}
