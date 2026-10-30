@@ -1902,3 +1902,15 @@ kbd {
   width: 16px;
   text-align: center;
 }
+
+/* Site Footer */
+.site-footer {
+  background: #fff;
+  border-top: 3px solid #0066cc;
+  padding: 16px 20px;
+  margin-top: 30px;
+  text-align: center;
+  color: #555;
+  font-size: 15px;
+  box-shadow: 0 -2px 4px rgba(0,0,0,0.05);
+}
